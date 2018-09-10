@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { View, ImageBackground, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ImageBackground,
+  ActivityIndicator,
+  StyleSheet
+} from 'react-native';
 import { Provider } from 'react-redux';
 
 import store from './redux/store';
@@ -30,13 +35,7 @@ export default class App extends Component {
 
     if (!isReady) {
       return (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
+        <View style={styles.indicator}>
           <ActivityIndicator size="large" />
         </View>
       );
@@ -44,15 +43,8 @@ export default class App extends Component {
 
     return (
       <Provider store={store}>
-        <View
-          style={{
-            flex: 1
-          }}
-        >
-          <ImageBackground
-            source={images.bg}
-            style={{ width: '100%', height: '100%' }}
-          >
+        <View style={styles.main}>
+          <ImageBackground source={images.bg} style={styles.background}>
             <Header />
             <Navigation />
           </ImageBackground>
@@ -61,3 +53,18 @@ export default class App extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  indicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  main: {
+    flex: 1
+  },
+  background: {
+    width: '100%',
+    height: '100%'
+  }
+});

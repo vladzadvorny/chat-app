@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 
-import { freeSpace } from '../constants/theme';
+import { freeSpace, fontSize } from '../constants/theme';
 
 class Header extends Component {
   state = {};
@@ -10,16 +10,23 @@ class Header extends Component {
     return (
       <View
         style={{
-          height: 60,
+          height: 64,
           backgroundColor: 'white',
           flexDirection: 'row',
           alignItems: 'center',
           paddingStart: freeSpace,
           paddingEnd: freeSpace,
-          elevation: 2
+          elevation: 2,
+          justifyContent: 'center'
         }}
       >
-        <Text>Headerfff</Text>
+        <Text
+          style={{
+            fontSize: fontSize.lg
+          }}
+        >
+          Анонимный чат
+        </Text>
       </View>
     );
   }
