@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "16.4.1",
     "react-native": "0.56.1",
+    "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.13.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",

@@ -297,12 +297,12 @@ class Menu extends Component {
   }
 }
 
-const buttonHeight = 64;
+const buttonHeight = 68;
 const styles = StyleSheet.create({
   main: {
     alignItems: 'center',
-    width: '100%',
-    position: 'absolute'
+    width: '100%'
+    // position: 'absolute'
   },
   menu: {
     width: '100%',

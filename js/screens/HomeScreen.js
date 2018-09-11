@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
 import Menu from '../components/Menu';
 
@@ -9,7 +9,12 @@ class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.main}>
-        <Menu />
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Menu />
+        </ScrollView>
       </View>
     );
   }
@@ -18,8 +23,8 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     padding: freeSpace
   }
 });

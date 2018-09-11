@@ -20,3 +20,19 @@ export const changeFindAge = payload => ({
   type: CHANGE_FINDAGE,
   payload
 });
+
+// app
+export const START_CHAT = 'START_CHAT';
+export const startChat = () => ({
+  type: START_CHAT
+});
+
+export const STOP_CHAT = 'STOP_CHAT';
+export const stopChat = () => ({
+  type: STOP_CHAT
+});
+
+export const TOGGLE_MUTE = 'TOGGLE_MUTE';
+export const toggleMute = () => ({
+  type: TOGGLE_MUTE
+});
