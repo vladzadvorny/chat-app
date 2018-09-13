@@ -9,6 +9,9 @@
   "dependencies": {
     "react": "16.4.1",
     "react-native": "0.56.1",
+    "react-native-autogrow-textinput": "^5.1.1",
+    "react-native-emoji-picker": "^0.2.2",
+    "react-native-emoji-selector": "^0.1.6",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.13.0",
     "react-redux": "^5.0.7",
