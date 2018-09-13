@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   View,
   Text,
@@ -13,23 +14,29 @@ import {
   fontSize,
   primaryColor
 } from '../constants/theme';
+import { stopChat } from '../redux/actions';
 
 class Looking extends Component {
   render() {
+    /* eslint-disable no-shadow */
+    const { counts, stopChat } = this.props;
+    /* eslint-enable */
+
     return (
       <View style={styles.main}>
         <View style={styles.box}>
           <Text style={styles.header}>Поиск собеседника</Text>
           <ActivityIndicator style={styles.loader} size="large" />
           <View style={styles.stats}>
-            <Text>Сейчас общаются:</Text>
-            <Text>В поиске:</Text>
+            <Text>Сейчас общаются: {!counts[0] ? '∞' : counts[0]}</Text>
+            <Text>В поиске: {!counts[1] ? '∞' : counts[1]}</Text>
           </View>
           <View style={styles.button}>
-            <TouchableOpacity style={styles.touchable}>
-              <Text style={{ color: whiteColor, fontSize: fontSize.md }}>
-                Отмена
-              </Text>
+            <TouchableOpacity
+              onPress={() => stopChat()}
+              style={styles.touchable}
+            >
+              <Text style={{ color: whiteColor, fontSize: 16 }}>Отмена</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -62,7 +69,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: primaryColor,
-    height: 40,
+    height: 34,
     elevation: 2
   },
   touchable: {
@@ -76,4 +83,16 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Looking;
+// eslint-disable-next-line
+const mapStateToProps = state => ({
+  counts: state.ws.counts
+});
+
+const mapDispatchToProps = {
+  stopChat
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Looking);

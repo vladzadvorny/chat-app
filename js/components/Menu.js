@@ -6,7 +6,8 @@ import {
   changeSex,
   changeAge,
   changeFindSex,
-  changeFindAge
+  changeFindAge,
+  startChat
 } from '../redux/actions';
 import {
   freeSpace,
@@ -26,7 +27,8 @@ class Menu extends Component {
       changeSex,
       changeAge,
       changeFindSex,
-      changeFindAge
+      changeFindAge,
+      startChat
     } = this.props;
     /* eslint-enable */
     const findSexDisable = findSex === 'unknown';
@@ -286,7 +288,10 @@ class Menu extends Component {
           </View>
         </View>
         <View style={styles.button}>
-          <TouchableOpacity style={styles.touchable}>
+          <TouchableOpacity
+            onPress={() => startChat()}
+            style={styles.touchable}
+          >
             <Text style={{ color: whiteColor, fontSize: fontSize.md }}>
               Найти
             </Text>
@@ -364,7 +369,8 @@ const mapDispatchToProps = {
   changeSex,
   changeAge,
   changeFindSex,
-  changeFindAge
+  changeFindAge,
+  startChat
 };
 
 export default connect(

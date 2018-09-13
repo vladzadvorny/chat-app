@@ -21,6 +21,22 @@ export const changeFindAge = payload => ({
   payload
 });
 
+// ws
+export const TYPING_STOP = 'TYPING_STOP';
+export const stopTyping = () => ({
+  type: TYPING_STOP
+});
+
+// export const FINISH = 'FINISH';
+// export const finish = () => ({
+//   type: FINISH
+// });
+
+export const RESET = 'RESET';
+export const reset = () => ({
+  type: RESET
+});
+
 // app
 export const START_CHAT = 'START_CHAT';
 export const startChat = () => ({

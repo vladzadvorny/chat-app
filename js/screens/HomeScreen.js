@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { View, StyleSheet, ScrollView } from 'react-native';
 
 import Menu from '../components/Menu';
@@ -6,6 +7,13 @@ import Menu from '../components/Menu';
 import { freeSpace } from '../constants/theme';
 
 class HomeScreen extends Component {
+  componentWillReceiveProps(nextProps) {
+    const { startChat, navigation } = this.props;
+    if (nextProps.startChat && !startChat) {
+      navigation.navigate('Chat');
+    }
+  }
+
   render() {
     return (
       <View style={styles.main}>
@@ -29,4 +37,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+const mapStateToProps = state => ({
+  startChat: state.app.startChat
+});
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeScreen);
