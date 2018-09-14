@@ -22,6 +22,7 @@ class ChatScreen extends Component {
     ws.onerror = event => dispatch({ type: 'WEBSOCKET:ERROR', payload: event });
     ws.onmessage = event => {
       const { type, payload } = JSON.parse(event.data);
+      console.log(type, payload);
       dispatch({ type, payload });
     };
     ws.onclose = () => dispatch({ type: 'WEBSOCKET:CLOSE' });
@@ -29,7 +30,12 @@ class ChatScreen extends Component {
 
   componentWillReceiveProps(nextProps) {
     // eslint-disable-next-line no-shadow
-    const { connect, error, menu, finish } = this.props;
+    const { connect, error, menu, finish, navigation, startChat } = this.props;
+    // stop chat
+    if (!nextProps.startChat && startChat) {
+      navigation.navigate('Home');
+    }
+
     if (nextProps.connect && !connect) {
       console.log('connect');
 
@@ -100,7 +106,8 @@ const mapStateToProps = state => ({
   start: state.ws.start,
   finish: state.ws.finish,
   error: state.ws.error,
-  menu: state.menu
+  menu: state.menu,
+  startChat: state.app.startChat
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
   freeSpace,
-  fontSize,
   whiteColor,
   blackColor,
   primaryColor
 } from '../constants/theme';
-import { toggleMute } from '../redux/actions';
+import { toggleMute, stopChat } from '../redux/actions';
 
 const iconSize = 28;
 
@@ -19,7 +18,7 @@ class Header extends Component {
 
   render() {
     /* eslint-disable no-shadow */
-    const { mute, toggleMuteAction } = this.props;
+    const { start, mute, stopChatAction, toggleMuteAction } = this.props;
     /* eslint-enable */
 
     return (
@@ -51,9 +50,28 @@ class Header extends Component {
               <Icon name="volume-off" size={iconSize} color={primaryColor} />
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginLeft: freeSpace * 1.5 }}>
-            <Icon name="sign-out" size={iconSize} color={primaryColor} />
-          </TouchableOpacity>
+          {start && (
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  'Покинуть чат',
+                  'Вы точно хотите покинуть чат?',
+                  [
+                    // {
+                    //   text: 'Нет',
+                    //   onPress: () => console.log('Cancel Pressed'),
+                    //   style: 'cancel'
+                    // },
+                    { text: 'Да', onPress: () => stopChatAction() }
+                  ]
+                  // { cancelable: false }
+                );
+              }}
+              style={{ marginLeft: freeSpace * 1.5 }}
+            >
+              <Icon name="sign-out" size={iconSize} color={primaryColor} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -78,10 +96,12 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
+  start: state.ws.start,
   mute: state.app.mute
 });
 
 const mapDispatchToProps = {
+  stopChatAction: stopChat,
   toggleMuteAction: toggleMute
 };
 
