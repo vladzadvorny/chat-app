@@ -6,13 +6,19 @@ import {
   Text,
   TouchableOpacity,
   Keyboard,
-  StyleSheet
+  StyleSheet,
+  Dimensions
 } from 'react-native';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import EmojiSelector, { Categories } from 'react-native-emoji-selector';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { primaryColor, whiteColor, freeSpace } from '../constants/theme';
+import {
+  primaryColor,
+  whiteColor,
+  freeSpace,
+  blackColor
+} from '../constants/theme';
 import { stopTyping } from '../redux/actions';
 import { MESSAGE, TYPING } from '../constants/wsTypes';
 import formatTime from '../utils/formatTime';
@@ -24,7 +30,8 @@ class Messages extends Component {
     body: '',
     picker: false,
     selectionStart: 0,
-    selectionEnd: 0
+    selectionEnd: 0,
+    sendingTypingIsAllowed: true
   };
 
   componentWillReceiveProps(nextProps) {
@@ -42,6 +49,33 @@ class Messages extends Component {
   onChange(e) {
     const { text } = e.nativeEvent;
     this.setState({ body: text || '' });
+  }
+
+  onSend() {
+    const { body } = this.state;
+    // eslint-disable-next-line no-shadow
+    const { websocket } = this.props;
+
+    if (body) {
+      // wsSend({
+      //   body,
+      //   type: MESSAGE
+      // });
+
+      websocket.send(
+        JSON.stringify({
+          payload: {
+            body
+          },
+          type: MESSAGE
+        })
+      );
+    }
+
+    this.setState({
+      body: '',
+      picker: false
+    });
   }
 
   onTyping() {
@@ -98,54 +132,60 @@ class Messages extends Component {
       <Fragment>
         {/* messages */}
         <View style={styles.messages}>
-          <ScrollView contentContainerStyle={styles.scrollView}>
+          <ScrollView
+            contentContainerStyle={styles.scrollView}
+            ref={r => {
+              this.scrollView = r;
+            }}
+            onContentSizeChange={() => {
+              this.scrollView.scrollToEnd({ animated: true });
+            }}
+          >
             {/* message */}
             {/* <View style={styles.message}>
               <View style={styles.bubble}>
-                <Text style={{ width: '80%', textAlign: 'justify' }}>
+                <Text style={styles.content}>
                   Не забывай меня, ради христа, я тебя люблю в миллион раз
                   больше, чем все остальные, взятые вместе.
                 </Text>
 
-                <Text
-                  style={[styles.time, { width: '20%', textAlign: 'right' }]}
-                >
-                  9:08 AM
+                <Text style={styles.time}>9:08 AM</Text>
+
+                <Text style={styles.content}>
+                  Не забывай меня, ради христа, я тебя люблю в миллион раз
+                  больше, чем все остальные, взятые вместе.
                 </Text>
+
+                <Text style={styles.time}>9:08 AM</Text>
               </View>
             </View> */}
-
             {/* me message */}
-            {/* <View style={[styles.message, styles.messageMe]}>
-              <View style={[styles.bubble, styles.bubbleMe]}>
-                <Text style={{ width: '80%', textAlign: 'justify' }}>
+            {/* <View style={[styles.message, styles.messageMy]}>
+              <View style={[styles.bubble, styles.bubbleMy]}>
+                <Text style={styles.content}>
                   Не забывай меня, ради христа, я тебя люблю в миллион раз
                   больше, чем все остальные, взятые вместе.
                 </Text>
 
-                <Text
-                  style={[styles.time, { width: '20%', textAlign: 'left' }]}
-                >
-                  9:08 AM
-                </Text>
+                <Text style={[styles.time]}>9:08 AM</Text>
               </View>
             </View> */}
             {messages.map(item => (
               <View
                 key={item.id}
-                style={[styles.message, item.my ? styles.messageMy : null]}
+                style={[
+                  styles.message,
+                  item.my ? styles.messageMy : null,
+                  item.unread ? styles.messageUnread : null
+                ]}
               >
-                <View
-                  style={[styles.bubble, item.my ? styles.messageMy : null]}
-                >
-                  <Text style={{ width: '80%', textAlign: 'justify' }}>
-                    {item.body}
-                  </Text>
+                <View style={[styles.bubble, item.my ? styles.bubbleMy : null]}>
+                  <Text style={styles.content}>{item.body}</Text>
 
                   <Text
                     style={[
                       styles.time,
-                      { width: '20%', textAlign: item.my ? 'left' : 'right' }
+                      { textAlign: item.my ? 'left' : 'right' }
                     ]}
                   >
                     {formatTime(new Date(item.date))}
@@ -224,12 +264,7 @@ class Messages extends Component {
             }}
           >
             {body ? (
-              <TouchableOpacity
-                onPress={() => {
-                  Keyboard.dismiss();
-                  this.setState({ picker: !picker });
-                }}
-              >
+              <TouchableOpacity onPress={() => this.onSend()}>
                 <Icon
                   name="greater-than"
                   size={iconSize - 2}
@@ -270,6 +305,8 @@ class Messages extends Component {
   }
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   // messages
   messages: {
@@ -277,7 +314,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start',
+    flexDirection: 'column-reverse'
   },
   message: {
     flexDirection: 'row',
@@ -296,13 +334,13 @@ const styles = StyleSheet.create({
   bubble: {
     backgroundColor: whiteColor,
     padding: 7,
-    minWidth: 0,
-    maxWidth: '80%',
+    // minWidth: 0,
+    maxWidth: width * 0.8,
     borderRadius: 4,
     borderBottomLeftRadius: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    fontSize: 12,
+    justifyContent: 'space-between',
     elevation: 1
   },
   bubbleMy: {
@@ -311,8 +349,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     backgroundColor: '#b7ebff'
   },
+  content: {
+    maxWidth: '78%',
+    color: blackColor
+  },
   time: {
-    color: '#04baff'
+    color: '#04baff',
+    width: 68
   },
 
   // info
