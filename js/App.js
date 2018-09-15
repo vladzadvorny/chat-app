@@ -11,6 +11,7 @@ import store from './redux/store';
 import images from './constants/images';
 
 import Header from './components/Header';
+import Sounds from './components/Sounds';
 import Navigation from './screens';
 
 export default class App extends Component {
@@ -48,6 +49,7 @@ export default class App extends Component {
             <Header />
             <Navigation />
           </ImageBackground>
+          <Sounds />
         </View>
       </Provider>
     );

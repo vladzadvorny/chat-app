@@ -23,6 +23,8 @@ import { stopTyping } from '../redux/actions';
 import { MESSAGE, TYPING } from '../constants/wsTypes';
 import formatTime from '../utils/formatTime';
 
+import PhotoUpload from './PhotoUpload';
+
 const iconSize = 27;
 
 class Messages extends Component {
@@ -126,7 +128,7 @@ class Messages extends Component {
 
   render() {
     const { body, picker } = this.state;
-    const { messages, typing } = this.props;
+    const { messages, typing, websocket } = this.props;
 
     return (
       <Fragment>
@@ -272,14 +274,7 @@ class Messages extends Component {
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  Keyboard.dismiss();
-                  this.setState({ picker: !picker });
-                }}
-              >
-                <Icon name="camera" size={iconSize} color={primaryColor} />
-              </TouchableOpacity>
+              <PhotoUpload iconSize={iconSize} websocket={websocket} />
             )}
           </View>
         </View>
