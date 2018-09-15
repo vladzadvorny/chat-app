@@ -7,13 +7,12 @@ import {
   TouchableOpacity,
   Keyboard,
   StyleSheet,
-  Dimensions,
-  Image
+  Dimensions
+  // Image
 } from 'react-native';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import EmojiSelector, { Categories } from 'react-native-emoji-selector';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import AutoHeightImage from 'react-native-auto-height-image';
 
 import {
   primaryColor,
@@ -27,6 +26,7 @@ import formatTime from '../utils/formatTime';
 import { apiUrl } from '../constants/config';
 
 import PhotoUpload from './PhotoUpload';
+import LightBoxImage from './LightBoxImage';
 
 const iconSize = 27;
 
@@ -187,11 +187,17 @@ class Messages extends Component {
                 <View style={[styles.bubble, item.my ? styles.bubbleMy : null]}>
                   {item.body && <Text style={styles.content}>{item.body}</Text>}
                   {item.img && (
-                    <AutoHeightImage
+                    // <AutoHeightImage
+                    //   source={{
+                    //     uri: `${apiUrl}/${item.img}`
+                    //   }}
+                    //   width={Dimensions.get('window').width * 0.55}
+                    // />
+                    <LightBoxImage
+                      style={{ height: 200, width: 200 }}
                       source={{
                         uri: `${apiUrl}/${item.img}`
                       }}
-                      width={Dimensions.get('window').width * 0.55}
                     />
                   )}
 
