@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { TouchableOpacity, Alert } from 'react-native';
+import { TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import ImageResizer from 'react-native-image-resizer';
+import ImageResizer from 'react-native-image-resizer'; // eslint-disable-line
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
 
-import { primaryColor } from '../constants/theme';
+import { primaryColor, freeSpace } from '../constants/theme';
 import { MESSAGE } from '../constants/wsTypes';
 import { apiUrl } from '../constants/config';
 
 class PhotoUpload extends Component {
   state = {
-    originUri: null
+    loading: false
   };
 
   uploadPicture = async formData => {
@@ -25,11 +25,16 @@ class PhotoUpload extends Component {
         websocket.send(
           JSON.stringify({
             payload: {
-              img: `${apiUrl}/uploads/${data.filePath}`
+              img: `uploads/${data.filePath}`
             },
             type: MESSAGE
           })
         );
+        setTimeout(() => {
+          this.setState({
+            loading: false
+          });
+        }, 2000);
       }
     } catch (error) {
       console.log(error);
@@ -37,7 +42,6 @@ class PhotoUpload extends Component {
   };
 
   openImagePicker() {
-    const { originUri } = this.state;
     const { chatId } = this.props;
 
     const options = {
@@ -50,19 +54,26 @@ class PhotoUpload extends Component {
 
     // get image from image picker
     ImagePicker.showImagePicker(options, async response => {
-      // this.setState({
-      //   originUri: response.uri
-      // });
       const { uri } = response;
-      console.log('response', response.uri);
+
+      this.setState({
+        loading: true
+      });
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
+        this.setState({
+          loading: false
+        });
         return;
       }
 
       if (response.error) {
         console.log('ImagePicker Error: ', response.error);
+        Alert.alert('Ошибка! Попробуй ещё раз.');
+        this.setState({
+          loading: false
+        });
         return;
       }
 
@@ -80,34 +91,43 @@ class PhotoUpload extends Component {
       //   name: 'photo.jpg'
       // });
 
-      // Resize and post the thumb
-      console.log('uri', originUri);
-      const hello = await ImageResizer.createResizedImage(
+      const result = await ImageResizer.createResizedImage(
         uri,
         800, // height
         600, // width
         'JPEG', // format
         80 // quality
-      ).then(({ uri }) => {
-        formData.append('chatId', chatId);
-        formData.append('file', {
-          uri,
-          type: 'image/jpeg',
-          name: 'photo.jpg'
-        });
-
-        this.uploadPicture(formData);
+      );
+      // .then(({ uri }) => {
+      formData.append('chatId', chatId);
+      formData.append('file', {
+        uri: result.uri,
+        type: 'image/jpeg',
+        name: 'photo.jpg'
       });
+
+      this.uploadPicture(formData);
+      // });
     });
   }
 
   render() {
     const { iconSize } = this.props;
+    const { loading } = this.state;
 
     return (
-      <TouchableOpacity onPress={() => this.openImagePicker()}>
-        <Icon name="camera" size={iconSize} color={primaryColor} />
-      </TouchableOpacity>
+      <Fragment>
+        {!loading ? (
+          <TouchableOpacity
+            style={{ padding: freeSpace }}
+            onPress={() => this.openImagePicker()}
+          >
+            <Icon name="camera" size={iconSize} color={primaryColor} />
+          </TouchableOpacity>
+        ) : (
+          <ActivityIndicator style={{ padding: freeSpace }} size="small" />
+        )}
+      </Fragment>
     );
   }
 }

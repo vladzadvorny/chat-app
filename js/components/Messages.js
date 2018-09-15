@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   Keyboard,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Image
 } from 'react-native';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import EmojiSelector, { Categories } from 'react-native-emoji-selector';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import AutoHeightImage from 'react-native-auto-height-image';
 
 import {
   primaryColor,
@@ -22,6 +24,7 @@ import {
 import { stopTyping } from '../redux/actions';
 import { MESSAGE, TYPING } from '../constants/wsTypes';
 import formatTime from '../utils/formatTime';
+import { apiUrl } from '../constants/config';
 
 import PhotoUpload from './PhotoUpload';
 
@@ -182,7 +185,15 @@ class Messages extends Component {
                 ]}
               >
                 <View style={[styles.bubble, item.my ? styles.bubbleMy : null]}>
-                  <Text style={styles.content}>{item.body}</Text>
+                  {item.body && <Text style={styles.content}>{item.body}</Text>}
+                  {item.img && (
+                    <AutoHeightImage
+                      source={{
+                        uri: `${apiUrl}/${item.img}`
+                      }}
+                      width={Dimensions.get('window').width * 0.55}
+                    />
+                  )}
 
                   <Text
                     style={[
@@ -212,12 +223,11 @@ class Messages extends Component {
           <View
             style={{
               justifyContent: 'center',
-              alignItems: 'center',
-              paddingLeft: freeSpace,
-              paddingRight: 5
+              alignItems: 'center'
             }}
           >
             <TouchableOpacity
+              style={{ padding: freeSpace }}
               onPress={() => {
                 Keyboard.dismiss();
                 this.setState({ picker: !picker });
@@ -261,12 +271,14 @@ class Messages extends Component {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              paddingLeft: 5,
-              paddingRight: freeSpace
+              paddingRight: 3
             }}
           >
             {body ? (
-              <TouchableOpacity onPress={() => this.onSend()}>
+              <TouchableOpacity
+                style={{ padding: freeSpace, paddingLeft: 20 }}
+                onPress={() => this.onSend()}
+              >
                 <Icon
                   name="greater-than"
                   size={iconSize - 2}
